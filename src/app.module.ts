@@ -2,9 +2,16 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AgenciesModule } from './agencies/agencies.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
-  imports: [AgenciesModule],
+  imports: [
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 60 * 1000, // 1 minute
+    }),
+    AgenciesModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

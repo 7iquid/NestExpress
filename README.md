@@ -44,7 +44,7 @@ POST /auth/login
 
 ```json
 {
-te  "username": "test2",
+  "username": "test2",
   "password": "password2"
 }
 ```

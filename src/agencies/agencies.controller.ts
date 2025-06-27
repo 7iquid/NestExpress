@@ -16,7 +16,6 @@ export class AgenciesController {
 
   constructor(private readonly agenciesService: AgenciesService) {}
 
-  @ApiTags('auth')
   @Get('report')
   @UseInterceptors(CacheInterceptor)
   async getReport() {

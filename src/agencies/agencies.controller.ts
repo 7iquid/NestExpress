@@ -1,7 +1,14 @@
-import { Controller, Get, Logger, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Logger,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AgenciesService } from './agencies.service';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('agencies')
 export class AgenciesController {
@@ -9,6 +16,7 @@ export class AgenciesController {
 
   constructor(private readonly agenciesService: AgenciesService) {}
 
+  @ApiTags('auth')
   @Get('report')
   @UseInterceptors(CacheInterceptor)
   async getReport() {
@@ -16,12 +24,15 @@ export class AgenciesController {
     return this.agenciesService.generateReport();
   }
 
-  
+  @ApiBearerAuth()
   @UseInterceptors(CacheInterceptor)
   @UseGuards(AuthGuard('jwt'))
   @Get('list')
   async getList() {
     this.logger.log('Generating report...');
-    return [{test: 'test', id: 1}, {test: 'test2', id: 2}];
+    return [
+      { test: 'test', id: 1 },
+      { test: 'test2', id: 2 },
+    ];
   }
 }

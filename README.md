@@ -1,6 +1,6 @@
 # 🦉 NestJS REST API
 
-A modular and secure REST API built with [NestJS](https://nestjs.com/), featuring Swagger docs, JWT authentication, request caching, and more.
+A modular and secure REST API built with [NestJS](https://nestjs.com/), featuring Swagger docs, JWT authentication, Firebase integration, and more.
 
 ---
 
@@ -13,6 +13,8 @@ A modular and secure REST API built with [NestJS](https://nestjs.com/), featurin
 - 🔁 **Global Cache** using `CacheInterceptor` for performance
 - 📄 **Swagger (OpenAPI) Documentation** at `/api`
 - 🔧 **Environment-configurable** via `@nestjs/config`
+- 🔥 **Firebase Admin SDK** integration (for authentication, Firestore, etc.)
+- 👤 **Profile Module** with CRUD endpoints for traveler profiles
 - 📁 **User Module** with mock users for demo/testing
 - 🌐 **Deployed on Render**
 
@@ -20,75 +22,51 @@ A modular and secure REST API built with [NestJS](https://nestjs.com/), featurin
 
 ## 📚 Swagger API Docs
 
-Access live, interactive docs at:
+Access interactive API docs at:
 
-👉 **[https://nestexpress.onrender.com/api](https://nestexpress.onrender.com/api)**
+👉 **[http://localhost:3000/api](http://localhost:3000/api)** (local)  
+👉 **[https://nestexpress.onrender.com/api](https://nestexpress.onrender.com/api)** (Render deployment)
 
-Use it to:
+You can use Swagger to:
 
 - Explore available endpoints
 - Test API requests with JWT token
-- View request/response structure and status codes
+- View request/response structures and status codes
 
 ---
 
-## 🔐 Authentication
+## 👤 Profile Module
 
-### 🧪 Login
+Traveler profiles API.
 
-```
-POST /auth/login
-```
+### Endpoints
 
-**Body (JSON):**
+- `POST /profile` → Create a new traveler profile
+- `GET /profile/:id` → Retrieve a traveler profile
+- `PUT /profile/:id` → Update a traveler profile
 
-```json
+### Profile fields
+
+- `id` (UUID)
+- `username` (string, unique)
+- `email` (string)
+- `bio` (string)
+- `interests` (array of strings, e.g. `["hiking", "food trips"]`)
+- `location` (city, country)
+- `avatarUrl` (string, optional)
+- `createdAt`, `updatedAt`
+
+### Example Request
+
+```http
+POST /profile
+Content-Type: application/json
+
 {
-  "username": "test2",
-  "password": "password2"
+  "username": "traveler01",
+  "email": "user@example.com",
+  "bio": "Loves adventures",
+  "interests": ["hiking", "food trips"],
+  "location": "Manila, Philippines"
 }
 ```
-
-**Response:**
-
-```json
-{
-  "access_token": "your.jwt.token"
-}
-```
-
-Use the token in `Authorization` header:
-
-```
-Authorization: Bearer your.jwt.token
-```
-
----
-
-## 🔒 Protected Route Example
-
-```
-GET /v1/agencies/list
-```
-
-Requires JWT token. Returns sample report data.
-
----
-
-## 🛠 Setup (for local development)
-
-```bash
-# Clone and install dependencies
-git clone https://github.com/your-username/nestexpress.git
-cd nestexpress
-yarn install
-
-# Start dev server
-yarn start:dev
-```
-
----
-
-## 🌍 Deployment
-
-This app is deployed on **Render.com** using auto-deploy from the `main` branch.

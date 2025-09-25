@@ -27,6 +27,10 @@ featuring Swagger docs, JWT authentication, request caching, and more.
 ## 📦 Installation
 
 ```bash
+# Clone the repo
+git clone https://github.com/7iquid/nextjs-with-supabase.git travejor-backend
+cd travejor-backend
+
 # install dependencies
 yarn install
 

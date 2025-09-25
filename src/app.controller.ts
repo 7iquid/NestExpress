@@ -11,13 +11,4 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
-
-  @Get('custom')
-  @LogRequest('Custom route hit!')
-  @LogRequest('Custom route hit!')
-  @LogRequest('Custom route hit!')
-  getCustom32323(): string {
-    console.log(`[LogRequest/custom] END`);
-    return 'This is a custom endpoint!';
-  }
 }

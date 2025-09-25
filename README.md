@@ -11,7 +11,6 @@ featuring Swagger docs, JWT authentication, request caching, and more.
   `@Service` pattern
 - 📖 **API Documentation** with [Swagger](https://swagger.io/)
 - ⚡ **Caching** using NestJS cache manager
-- 🗂 **Database Integration** with Prisma ORM (PostgreSQL)
 - 🌱 **Seeding Support** for quick database setup
 - 📝 **Logging** with NestJS Logger for debugging
 - 🎯 **Validation & Serialization** using `class-validator` and

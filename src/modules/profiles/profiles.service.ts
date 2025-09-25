@@ -13,11 +13,12 @@ import * as admin from 'firebase-admin';
 @Injectable()
 export class ProfilesService {
   private readonly collection: admin.firestore.CollectionReference<Profile>;
-  private readonly logger = new Logger(ProfilesService.name); // 🔹 Logger instance
+  private readonly logger = new Logger(ProfilesService.name);
 
   constructor(
     @Inject('FIREBASE_ADMIN') private readonly firebaseAdmin: admin.app.App,
   ) {
+    // ✅ Typed collection = acts like withConverter
     this.collection = this.firebaseAdmin
       .firestore()
       .collection('profiles') as admin.firestore.CollectionReference<Profile>;
@@ -29,6 +30,7 @@ export class ProfilesService {
     const snapshot = await this.collection
       .where('username', '==', dto.username)
       .get();
+
     if (!snapshot.empty) {
       this.logger.warn(`Username ${dto.username} already exists`);
       throw new BadRequestException('Username already exists');
@@ -44,17 +46,21 @@ export class ProfilesService {
 
     await this.collection.doc(profile.id).set(profile);
     this.logger.log(`Profile created with ID: ${profile.id}`);
+
     return profile;
   }
 
   async findOne(id: string): Promise<Profile> {
     this.logger.log(`Fetching profile with ID: ${id}`);
     const doc = await this.collection.doc(id).get();
+
     if (!doc.exists) {
       this.logger.warn(`Profile with ID ${id} not found`);
       throw new NotFoundException(`Profile with ID ${id} not found`);
     }
-    return doc.data() as Profile;
+
+    const data = doc.data()!;
+    return { ...data, id: doc.id };
   }
 
   async update(id: string, dto: UpdateProfileDto): Promise<Profile> {
@@ -69,25 +75,26 @@ export class ProfilesService {
 
     const data = docSnap.data()!;
     const updated: Profile = {
-      id: data.id,
-      username: dto.username ?? data.username,
-      email: dto.email ?? data.email,
-      bio: dto.bio ?? data.bio,
-      interests: dto.interests ?? data.interests,
-      location: dto.location ?? data.location,
-      avatarUrl: dto.avatarUrl ?? data.avatarUrl,
-      createdAt: data.createdAt,
+      ...data,
+      ...dto,
+      id: docRef.id,
       updatedAt: new Date(),
     };
 
-    await docRef.update({ ...updated });
+    await docRef.set(updated, { merge: true }); // ✅ use merge
     this.logger.log(`Profile with ID ${id} updated`);
+
     return updated;
   }
 
   async findAll(): Promise<Profile[]> {
     this.logger.log('Fetching all profiles');
+
     const snapshot = await this.collection.get();
-    return snapshot.docs.map((doc) => doc.data() as Profile);
+
+    return snapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }));
   }
 }

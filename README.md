@@ -1,72 +1,74 @@
 # 🦉 NestJS REST API
 
-A modular and secure REST API built with [NestJS](https://nestjs.com/), featuring Swagger docs, JWT authentication, Firebase integration, and more.
+A modular and secure REST API built with [NestJS](https://nestjs.com/),
+featuring Swagger docs, JWT authentication, request caching, and more.
 
 ---
 
 ## 🚀 Features
 
-- ✅ **Modular architecture** using `@Module`, `@Controller`, and `@Service` pattern
-- 🔐 **JWT Authentication** with:
-  - Login using `passport-local` strategy
-  - Protected routes with `@UseGuards(AuthGuard('jwt'))`
-- 🔁 **Global Cache** using `CacheInterceptor` for performance
-- 📄 **Swagger (OpenAPI) Documentation** at `/api`
-- 🔧 **Environment-configurable** via `@nestjs/config`
-- 🔥 **Firebase Admin SDK** integration (for authentication, Firestore, etc.)
-- 👤 **Profile Module** with CRUD endpoints for traveler profiles
-- 📁 **User Module** with mock users for demo/testing
-- 🌐 **Deployed on Render**
+- ✅ **Modular architecture** using `@Module`, `@Controller`, and
+  `@Service` pattern
+- 📖 **API Documentation** with [Swagger](https://swagger.io/)
+- ⚡ **Caching** using NestJS cache manager
+- 🗂 **Database Integration** with Prisma ORM (PostgreSQL)
+- 🌱 **Seeding Support** for quick database setup
+- 📝 **Logging** with NestJS Logger for debugging
+- 🎯 **Validation & Serialization** using `class-validator` and
+  `class-transformer`
+- 🧩 **Profiles Module** with CRUD operations and seeding
 
 ---
 
-## 📚 Swagger API Docs
+## 📦 Installation
 
-Access interactive API docs at:
+```bash
+# install dependencies
+yarn install
 
-👉 **[http://localhost:3000/api](http://localhost:3000/api)** (local)  
-👉 **[https://nestexpress.onrender.com/api](https://nestexpress.onrender.com/api)** (Render deployment)
+# setup environment variables
+cp .env.example .env
 
-You can use Swagger to:
+# run database migrations
+npx prisma migrate dev
 
-- Explore available endpoints
-- Test API requests with JWT token
-- View request/response structures and status codes
-
----
-
-## 👤 Profile Module
-
-Traveler profiles API.
-
-### Endpoints
-
-- `POST /profile` → Create a new traveler profile
-- `GET /profile/:id` → Retrieve a traveler profile
-- `PUT /profile/:id` → Update a traveler profile
-
-### Profile fields
-
-- `id` (UUID)
-- `username` (string, unique)
-- `email` (string)
-- `bio` (string)
-- `interests` (array of strings, e.g. `["hiking", "food trips"]`)
-- `location` (city, country)
-- `avatarUrl` (string, optional)
-- `createdAt`, `updatedAt`
-
-### Example Request
-
-```http
-POST /profile
-Content-Type: application/json
-
-{
-  "username": "traveler01",
-  "email": "user@example.com",
-  "bio": "Loves adventures",
-  "interests": ["hiking", "food trips"],
-  "location": "Manila, Philippines"
-}
+# run seed script (example: profiles)
+yarn seed:profiles
 ```
+
+---
+
+## ▶️ Running the app
+
+```bash
+# development
+yarn start:dev
+
+# production build
+yarn build
+yarn start:prod
+```
+
+---
+
+## 📖 API Documentation
+
+Swagger UI available at: <http://localhost:3000/api/docs>
+
+---
+
+## 🌱 Seeding
+
+We provide seeding scripts for initial data setup.
+
+```bash
+# seed profiles
+yarn seed:profiles
+```
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License.  
+Authored by **Tavie Legasto**.

@@ -23,15 +23,16 @@ async function bootstrap() {
     .setTitle('My API')
     .setDescription('API documentation for testing')
     .setVersion('1.0')
-    .addBearerAuth() // optional if you have JWT auth
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document); // accessible at /v1/api
+
+  SwaggerModule.setup('api/docs', app, document);
 
   await app.listen(3000);
   console.log(`🚀 Application is running on: http://localhost:3000/v1`);
-  console.log(`📄 Swagger docs available at: http://localhost:3000/api`);
+  console.log(`📄 Swagger docs available at: http://localhost:3000/api/docs`);
 }
 
 bootstrap();

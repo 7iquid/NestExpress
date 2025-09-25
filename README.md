@@ -37,9 +37,6 @@ yarn install
 # setup environment variables
 cp .env.example .env
 
-# run database migrations
-npx prisma migrate dev
-
 # run seed script (example: profiles)
 yarn seed:profiles
 ```

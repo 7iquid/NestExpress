@@ -6,6 +6,25 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Parse CORS origins from env (support JSON array or comma-separated string)
+  let allowedOrigins: string[] = [];
+  try {
+    allowedOrigins = JSON.parse(process.env.ALLOWED_CORS || '[]');
+  } catch {
+    allowedOrigins = (process.env.ALLOWED_CORS || '')
+      .split(',')
+      .map((o) => o.trim())
+      .filter(Boolean);
+  }
+
+  // Allow frontend requests
+  app.enableCors({
+    origin:
+      allowedOrigins.length > 0 ? allowedOrigins : ['http://localhost:3000'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+
   // Optional: set a global prefix if you're versioning your API
   app.setGlobalPrefix('v1');
 
@@ -27,12 +46,15 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-
   SwaggerModule.setup('api/docs', app, document);
 
-  await app.listen(3000);
-  console.log(`🚀 Application is running on: http://localhost:3000/v1`);
-  console.log(`📄 Swagger docs available at: http://localhost:3000/api/docs`);
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
+
+  console.log(`🚀 Application is running on: http://localhost:${port}/v1`);
+  console.log(
+    `📄 Swagger docs available at: http://localhost:${port}/api/docs`,
+  );
 }
 
 bootstrap();

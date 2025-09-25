@@ -7,15 +7,21 @@ async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
   const configService = app.get(ConfigService);
 
-  const firebaseApp = admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: configService.get<string>('FIREBASE_PROJECT_ID'),
-      privateKey: configService
-        .get<string>('FIREBASE_PRIVATE_KEY')
-        ?.replace(/\\n/g, '\n'),
-      clientEmail: configService.get<string>('FIREBASE_CLIENT_EMAIL'),
-    }),
-  });
+  // ✅ Reuse Firebase app if already initialized
+  let firebaseApp: admin.app.App;
+  if (admin.apps.length === 0) {
+    firebaseApp = admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: configService.get<string>('FIREBASE_PROJECT_ID'),
+        privateKey: configService
+          .get<string>('FIREBASE_PRIVATE_KEY')
+          ?.replace(/\\n/g, '\n'),
+        clientEmail: configService.get<string>('FIREBASE_CLIENT_EMAIL'),
+      }),
+    });
+  } else {
+    firebaseApp = admin.app(); // reuse existing default app
+  }
 
   const firestore = firebaseApp.firestore();
 
@@ -232,6 +238,7 @@ async function bootstrap() {
 
   await batch.commit();
   console.log(`✅ Seeded ${profiles.length} profiles`);
+
   await app.close();
 }
 

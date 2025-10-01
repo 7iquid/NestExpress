@@ -1,30 +1,34 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ProfileResponseDto {
-  @ApiProperty()
+  @ApiProperty({ example: '12345' })
   id: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'johndoe' })
   username: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'john@example.com' })
   email: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, example: 'I love coding!' })
   bio?: string;
 
-  @ApiProperty({ type: [String], required: false })
+  @ApiProperty({
+    type: [String],
+    required: false,
+    example: ['coding', 'music'],
+  })
   interests?: string[];
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, example: 'New York, USA' })
   location?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, example: 'https://example.com/avatar.png' })
   avatarUrl?: string;
 
-  @ApiProperty()
-  createdAt: any; // Firestore Timestamp or Date
+  @ApiProperty({ example: new Date().toISOString() })
+  createdAt: Date;
 
-  @ApiProperty()
-  updatedAt: any;
+  @ApiProperty({ example: new Date().toISOString() })
+  updatedAt: Date;
 }

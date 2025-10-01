@@ -5,39 +5,39 @@ import {
   BadRequestException,
   Logger,
 } from '@nestjs/common';
-import { Profile } from './entities/profile.entity';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ProfileResponseDto } from './dto/response-profile.dto';
 import * as admin from 'firebase-admin';
 
 @Injectable()
 export class ProfilesService {
-  private readonly collection: admin.firestore.CollectionReference<Profile>;
+  private readonly collection: admin.firestore.CollectionReference<ProfileResponseDto>;
   private readonly logger = new Logger(ProfilesService.name);
 
   constructor(
     @Inject('FIREBASE_ADMIN') private readonly firebaseAdmin: admin.app.App,
   ) {
-    // ✅ Typed collection = acts like withConverter
     this.collection = this.firebaseAdmin
       .firestore()
-      .collection('profiles') as admin.firestore.CollectionReference<Profile>;
+      .collection(
+        'profiles',
+      ) as admin.firestore.CollectionReference<ProfileResponseDto>;
   }
 
-  async create(dto: CreateProfileDto): Promise<Profile> {
+  async create(dto: CreateProfileDto): Promise<ProfileResponseDto> {
     this.logger.log(`Creating profile for username: ${dto.username}`);
 
     const snapshot = await this.collection
       .where('username', '==', dto.username)
       .get();
-
     if (!snapshot.empty) {
       this.logger.warn(`Username ${dto.username} already exists`);
       throw new BadRequestException('Username already exists');
     }
 
     const now = new Date();
-    const profile: Profile = {
+    const profile: ProfileResponseDto = {
       id: this.collection.doc().id,
       ...dto,
       createdAt: now,
@@ -50,7 +50,7 @@ export class ProfilesService {
     return profile;
   }
 
-  async findOne(id: string): Promise<Profile> {
+  async findOne(id: string): Promise<ProfileResponseDto> {
     this.logger.log(`Fetching profile with ID: ${id}`);
     const doc = await this.collection.doc(id).get();
 
@@ -59,11 +59,10 @@ export class ProfilesService {
       throw new NotFoundException(`Profile with ID ${id} not found`);
     }
 
-    const data = doc.data()!;
-    return { ...data, id: doc.id };
+    return { ...doc.data()!, id: doc.id };
   }
 
-  async update(id: string, dto: UpdateProfileDto): Promise<Profile> {
+  async update(id: string, dto: UpdateProfileDto): Promise<ProfileResponseDto> {
     this.logger.log(`Updating profile with ID: ${id}`);
     const docRef = this.collection.doc(id);
     const docSnap = await docRef.get();
@@ -73,25 +72,23 @@ export class ProfilesService {
       throw new NotFoundException(`Profile with ID ${id} not found`);
     }
 
-    const data = docSnap.data()!;
-    const updated: Profile = {
-      ...data,
+    const updated: ProfileResponseDto = {
+      ...docSnap.data()!,
       ...dto,
       id: docRef.id,
       updatedAt: new Date(),
     };
 
-    await docRef.set(updated, { merge: true }); // ✅ use merge
+    await docRef.set(updated, { merge: true });
     this.logger.log(`Profile with ID ${id} updated`);
 
     return updated;
   }
 
-  async findAll(): Promise<Profile[]> {
+  async findAll(): Promise<ProfileResponseDto[]> {
     this.logger.log('Fetching all profiles');
 
     const snapshot = await this.collection.get();
-
     return snapshot.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id,

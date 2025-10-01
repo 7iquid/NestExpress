@@ -9,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
       provide: 'FIREBASE_ADMIN',
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        return admin.initializeApp({
+        const app = admin.initializeApp({
           credential: admin.credential.cert({
             projectId: config.get<string>('FIREBASE_PROJECT_ID'),
             privateKey: config
@@ -19,6 +19,8 @@ import { ConfigService } from '@nestjs/config';
           }),
           databaseURL: `https://${config.get<string>('FIREBASE_PROJECT_ID')}.firebaseio.com`,
         });
+        app.firestore().settings({ ignoreUndefinedProperties: true });
+        return app;
       },
     },
   ],

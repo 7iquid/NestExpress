@@ -3,12 +3,11 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - dev # change if your default branch is different
+      - main
 
 jobs:
   docker:
     runs-on: ubuntu-latest
-    environment: Preview
 
     steps:
       - name: Checkout code

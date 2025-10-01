@@ -7,7 +7,10 @@ import {
   IsString,
 } from 'class-validator';
 
-export class CreateProfileDto {
+export class ProfileDto {
+  @ApiProperty({ example: '12345' })
+  id: string;
+
   @ApiProperty({ example: 'johndoe' })
   @IsNotEmpty()
   @IsString()
@@ -42,4 +45,10 @@ export class CreateProfileDto {
   @IsOptional()
   @IsString()
   avatarUrl?: string;
+
+  @ApiProperty({ example: new Date().toISOString() })
+  createdAt: Date;
+
+  @ApiProperty({ example: new Date().toISOString() })
+  updatedAt: Date;
 }
